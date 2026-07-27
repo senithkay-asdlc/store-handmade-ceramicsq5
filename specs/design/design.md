@@ -27,6 +27,11 @@ product catalog, cart, checkout/order processing (including Stripe payment
 and atomic stock decrement), and account data. One service because every
 capability shares the same core entities (products, orders) and there is no
 requirement forcing a different runtime, scaling profile, or technology.
+- **ceramics-db** (`database`) — the platform-provisioned relational database
+backing ceramics-api: products, carts, orders, and shopper accounts. Kept as
+a platform-managed resource (rather than an embedded file) so stock
+decrements and order creation commit atomically under concurrent checkouts
+(NFR-3) and order records persist independently of the service's lifecycle.
 
 ## 3. Capabilities
 
@@ -97,27 +102,29 @@ in caller's JWT against Thunder and injects identity headers; ceramics-api
 reads `X-User-Id`/`X-User-Groups`, never issues tokens itself.
 - `ceramics-api -> stripe` — payment processing (charge creation) during
 checkout.
+- `ceramics-api -> ceramics-db` — reads/writes for products, carts, orders,
+and shopper accounts, including the atomic stock-decrement-plus-order-create
+transaction.
 
 ## 7. Data flow
 
 1. **Browse &amp; add to cart** — a shopper (guest or signed-in) loads
- storefront-webapp, which calls `ceramics-api` to list/search published
- products; adding an in-stock item calls `ceramics-api` to create/update a
- cart line, capped at the product's current stock.
+storefront-webapp, which calls `ceramics-api` to list/search published
+products; adding an in-stock item calls `ceramics-api` to create/update a
+cart line, capped at the product's current stock.
 2. **Checkout** — the shopper submits shipping details and payment;
- storefront-webapp calls `ceramics-api`, which re-validates stock for every
- cart line, computes the order total, creates a Stripe charge, and — only
- on successful payment — atomically decrements stock and creates the order
- record; on failure the cart and stock are left untouched and an error is
- returned.
+storefront-webapp calls `ceramics-api`, which re-validates stock for every
+cart line, computes the order total, creates a Stripe charge, and — only
+on successful payment — atomically decrements stock and creates the order
+record; on failure the cart and stock are left untouched and an error is
+returned.
 3. **Order confirmation &amp; history** — on success the shopper sees an order
- confirmation with an order number; if signed in, the order is retrievable
- later from their order-history view.
+confirmation with an order number; if signed in, the order is retrievable
+later from their order-history view.
 4. **Admin catalog management** — the store admin signs in to admin-webapp,
- which calls `ceramics-api` to create/edit products and stock counts; new
- or updated products immediately affect what storefront-webapp shows as
- available/sold-out.
+which calls `ceramics-api` to create/edit products and stock counts; new
+or updated products immediately affect what storefront-webapp shows as
+available/sold-out.
 5. **Admin order fulfillment** — the store admin views incoming orders in
- admin-webapp and updates fulfillment status through `ceramics-api` as
- items are shipped/delivered/cancelled.
-
+admin-webapp and updates fulfillment status through `ceramics-api` as
+items are shipped/delivered/cancelled.

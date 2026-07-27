@@ -17,3 +17,4 @@ admin-webapp -> ceramics-api
 admin-webapp -> store-auth
 ceramics-api -> store-auth
 ceramics-api -> stripe
+ceramics-api -> ceramics-db
