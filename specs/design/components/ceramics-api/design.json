@@ -1,0 +1,18 @@
+{
+  "name": "ceramics-api",
+  "type": "service",
+  "version": "0.1.0",
+  "language": "Go",
+  "buildpack": "docker",
+  "appPath": "ceramics-api",
+  "entrypoint": "deployment/service",
+  "exposure": "internet",
+  "dependencies": [
+    { "kind": "platform-resource", "name": "store-auth", "resourceType": "thunder-app", "description": "Sign-in for registered shoppers and the store admin; role (shopper vs admin) is resolved from the caller's Thunder groups." },
+    { "kind": "external", "name": "stripe", "style": "sdk", "package": "go:github.com/stripe/stripe-go/v76", "description": "Processes checkout payment charges; no card data is stored by this service.", "config": [
+      { "key": "STRIPE_API_KEY", "secret": true, "description": "Stripe secret API key used to create and confirm payment charges." }
+    ] }
+  ],
+  "description": "Owns the product catalog, cart, checkout/order processing (Stripe payment plus atomic stock decrement), account data, and admin order/reporting endpoints for the ceramics store. Embeds its own SQLite database for products, carts, orders, and shopper accounts. Does not issue auth tokens (Thunder does) and does not call any carrier/shipping API.",
+  "skillsApplied": ["openapi-conventions", "go", "api-management", "thunder-authentication"]
+}

@@ -149,3 +149,4 @@ result in exactly one successful order; the other purchaser sees a
 clear sold-out message and is not charged.
 - A signed-in shopper can view their order history and see accurate past
 order details after their cart is cleared post-purchase.
+

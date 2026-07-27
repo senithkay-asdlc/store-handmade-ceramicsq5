@@ -1,0 +1,16 @@
+{
+  "name": "storefront-webapp",
+  "type": "web-application",
+  "version": "0.1.0",
+  "language": "TypeScript",
+  "buildpack": "docker",
+  "appPath": "storefront-webapp",
+  "entrypoint": "deployment/web-application",
+  "exposure": "internet",
+  "dependencies": [
+    { "kind": "component", "name": "ceramics-api", "description": "Catalog browse/search, cart, checkout, account, and order-history calls." },
+    { "kind": "platform-resource", "name": "store-auth", "resourceType": "thunder-app", "description": "Optional shopper sign-in; guest checkout does not require it." }
+  ],
+  "description": "The public storefront: catalog browsing/search, cart, checkout with Stripe payment, optional shopper sign-in, and order history. Guest checkout works without signing in. Does not itself hold the Stripe secret key or any admin capability.",
+  "skillsApplied": ["react-webapp", "thunder-authentication"]
+}

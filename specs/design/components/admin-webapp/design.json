@@ -1,0 +1,16 @@
+{
+  "name": "admin-webapp",
+  "type": "web-application",
+  "version": "0.1.0",
+  "language": "TypeScript",
+  "buildpack": "docker",
+  "appPath": "admin-webapp",
+  "entrypoint": "deployment/web-application",
+  "exposure": "internet",
+  "dependencies": [
+    { "kind": "component", "name": "ceramics-api", "description": "Product/inventory management and order management + reporting calls." },
+    { "kind": "platform-resource", "name": "store-auth", "resourceType": "thunder-app", "description": "Required sign-in for the store admin; ceramics-api authorizes admin endpoints by the admin Thunder group." }
+  ],
+  "description": "The store owner's administrative console: create/edit/publish/delete products, adjust stock, manage order fulfillment status, and view sales reporting. Always requires sign-in. Separate deployable from the public storefront because it serves a different user with a different release cadence.",
+  "skillsApplied": ["react-webapp", "thunder-authentication"]
+}
