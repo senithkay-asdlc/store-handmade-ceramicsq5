@@ -3,6 +3,7 @@ title Handmade Ceramics Online Store
 component storefront-webapp as "Ceramics Storefront" web-application
 component admin-webapp as "Admin Console" web-application
 component ceramics-api as "Ceramics API" service
+component ceramics-db as "Ceramics Database" database
 
 east store-auth as "Thunder Auth" identity-server
 south stripe as "Stripe" service
