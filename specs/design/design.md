@@ -120,3 +120,4 @@ checkout.
 5. **Admin order fulfillment** — the store admin views incoming orders in
  admin-webapp and updates fulfillment status through `ceramics-api` as
  items are shipped/delivered/cancelled.
+
