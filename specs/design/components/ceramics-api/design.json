@@ -7,13 +7,42 @@
   "appPath": "ceramics-api",
   "entrypoint": "deployment/service",
   "exposure": "internet",
-  "dependencies": [
-    { "kind": "platform-resource", "name": "store-auth", "resourceType": "thunder-app", "description": "Sign-in for registered shoppers and the store admin; role (shopper vs admin) is resolved from the caller's Thunder groups." },
-    { "kind": "external", "name": "stripe", "style": "sdk", "package": "go:github.com/stripe/stripe-go/v76", "description": "Processes checkout payment charges; no card data is stored by this service.", "config": [
-      { "key": "STRIPE_API_KEY", "secret": true, "description": "Stripe secret API key used to create and confirm payment charges." }
-    ] },
-    { "kind": "platform-resource", "name": "ceramics-db", "resourceType": "postgres", "description": "Stores products, carts, orders (including immutable line-item/shipping snapshots), and shopper accounts; the checkout stock-decrement + order-create write is a single transaction against this database." }
-  ],
   "description": "Owns the product catalog, cart, checkout/order processing (Stripe payment plus atomic stock decrement), account data, and admin order/reporting endpoints for the ceramics store. Persists all data in the platform-provisioned ceramics-db PostgreSQL database. Does not issue auth tokens (Thunder does) and does not call any carrier/shipping API.",
-  "skillsApplied": ["openapi-conventions", "go", "api-management", "thunder-authentication"]
+  "dependencies": [
+    {
+      "kind": "platform-resource",
+      "name": "store-auth",
+      "description": "Sign-in for registered shoppers and the store admin; role (shopper vs admin) is resolved from the caller's Thunder groups.",
+      "resourceType": "thunder-app"
+    },
+    {
+      "kind": "external",
+      "name": "stripe",
+      "description": "Processes checkout payment charges; no card data is stored by this service.",
+      "style": "sdk",
+      "package": "go:github.com/stripe/stripe-go/v76",
+      "config": [
+        {
+          "key": "STRIPE_API_KEY",
+          "secret": true,
+          "description": "Stripe secret API key used to create and confirm payment charges."
+        }
+      ]
+    },
+    {
+      "kind": "platform-resource",
+      "name": "ceramics-db",
+      "description": "Stores products, carts, orders (including immutable line-item/shipping snapshots), and shopper accounts; the checkout stock-decrement + order-create write is a single transaction against this database.",
+      "resourceType": "postgres"
+    }
+  ],
+  "exposesAPI": {
+    "auth": "end-user-required"
+  },
+  "skillsApplied": [
+    "openapi-conventions",
+    "go",
+    "api-management",
+    "thunder-authentication"
+  ]
 }
